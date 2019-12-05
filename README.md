@@ -1,2 +1,2 @@
 # 6502-API
-An 6502 reference API and an implementation. Final project for CS330.
+A 6502 reference API and implementation. This is the final project for CS330 (internet programming). This is a full-stack project that uses bootstrap, flask, react, and PostgreSQL.
