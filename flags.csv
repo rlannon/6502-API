@@ -1,8 +1,0 @@
-flag,name,description
-N,"Negative","Set when the result of the last instruction was negative (>= $80)"
-Z,"Zero","Set when the result of the last instruction was 0. Also used to check equality (result is equal when Z = 1)"
-V,"Overflow","Set when the result of a signed mathematical operation does not fit into 8 bits (i.e. result is outside the range -128 to 127). Also set by the BIT instruction based on the value at the tested address"
-B,"Break","Set when an interrupt is triggered by the BRK instruction; this can help determine whether an interrupt was triggered by hardware (B is 0) or software (B is 1); note that it only affects the pushed value, and this bit is ignored on the PLP instruction"
-D,"Decimal","Indicates whether the CPU is operating using binary-coded-decimal"
-I,"Interrupt disable","When set, disables maskable interrupts (IRQs). This is automatically set when an interrupt occurs, and can be manually set and cleared with the SEI and CLI instructions, respectively"
-C,"Carry","Indicates whether the result of a mathematical operation was outside the range 0 to 255, enabling 16-bit arithmetic. This flag is also set by comparisons when the right-hand value is greater than or equal to the left-hand value"
