@@ -71,7 +71,7 @@ mnemonic,addressing_mode,opcode,length,time,page_boundary_increase
 "JMP","abs","$4C",3,3,0
 "JMP","ind","$6C",3,5,0
 "JSR","abs","$20",3,6,0
-"LDA","imm","$A9",2,2,0,
+"LDA","imm","$A9",2,2,0
 "LDA","zp","$A5",2,3,0
 "LDA","zp,x","$B5",2,4,0
 "LDA","abs","$AD",3,4,0
