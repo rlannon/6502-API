@@ -1,0 +1,12 @@
+facts,
+"The 6502 was first released in 1975"
+"When released, the 6502 was the least expensive processor on the market"
+"The processor is considered responsible for the home computer revolution of the 1980s"
+"A modified form of the 6502 was used in the NES, Apple II, and BBC Micro"
+"The 6502 is still widely used today -- hundreds of millions are still being produced for use in embedded systems"
+"The processor's max clock rate ranges from 1MHz to 3MHz, about 1,000 times slower than many of the processors in modern laptops"
+"Compared to other processors of the time, the 6502 has very few registers -- a measely 3 general-purpose registers compared with the Z80's 8"
+"The original design included 3,218 transistors. By comparison, an Intel i7 processor can have upwards of 2 billion"
+"The 6502 has an 8-bit data size, meaning its registers can handle values in the range 0-255"
+"The 6502 has a 16-bit address bus, allowing it to address 65,536 bytes (64k) of data"
+"You can still purchase 6502 CPUs from Western Design Center -- they cost about $6 USD apiece"
