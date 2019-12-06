@@ -146,6 +146,15 @@ def getFlag(flag: str):
     return jsonify(getFlagDicts(getData(f"SELECT * FROM flags WHERE flag = '{flag}';")))
 
 
+def getFactDicts(sqlData: list):
+    values = []
+    for datum in sqlData:
+        if (len(datum) == 1):
+            values.append({"fact": datum[0]})
+        else:
+            values.append({"id": datum[0], "fact": datum[1]})
+    return values
+
 #
 # getAllFacts()
 #
@@ -155,7 +164,8 @@ def getFlag(flag: str):
 #
 @app.route('/api/v1/facts')
 def getAllFacts():
-    return jsonify(getData(f"SELECT fact FROM facts;"))
+    data = getData(f"SELECT * FROM facts;")
+    return jsonify(getFactDicts(data))
 
 #
 # getFactID()
@@ -168,7 +178,8 @@ def getAllFacts():
 def getFactID(factID:int):
     factsLength = getTableLength("facts")
     index = (factID % factsLength) + 1  # table indexing starts at 1, not 0
-    return jsonify(getData(f"SELECT fact FROM facts WHERE id = {index};"))
+    data = getData(f"SELECT fact FROM facts WHERE id = {index};")
+    return jsonify(getFactDicts(data))
 
 
 #
@@ -181,4 +192,5 @@ def getFactID(factID:int):
 def getRandomFact():
     factsLength = getTableLength("facts")
     index = random.randrange(1, factsLength)
-    return jsonify(getData(f"SELECT fact FROM facts WHERE id = {index};"))
+    data = getData(f"SELECT * FROM facts WHERE id = {index};")
+    return jsonify(getFactDicts(data))
