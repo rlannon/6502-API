@@ -1,14 +1,16 @@
-import requests
 from flask import Flask, request, redirect, render_template, url_for, json, jsonify, session
+from flaskext.markdown import Markdown
 import random
-import react
 import psycopg2
 import os
 
 app = Flask(__name__)
+Markdown(app, extensions=['tables', 'markdown.extensions.tables'])
 DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASE_PORT = os.environ.get('DATABASE_PORT')
 db = psycopg2.connect(
     DATABASE_URL,
+    port=DATABASE_PORT,
     sslmode='require')
 cur = db.cursor()
 
@@ -96,7 +98,7 @@ def getAllInstrs():
 #
 # of the format "mnemonic, name, description, flags"
 #
-@app.route(API_URL + 'instruction/<mnemonic>')
+@app.route(API_URL + 'instructions/<mnemonic>')
 def getAnInstr(mnemonic: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM instructions_general WHERE mnemonic = '{mnemonic}';")
@@ -110,7 +112,7 @@ def getAnInstr(mnemonic: str):
 #
 # of the format "mnemonic, addressing mode, opcode, lenth, time, page_boundary_increase"
 #
-@app.route(API_URL + 'instruction/<mnemonic>/<mode>')
+@app.route(API_URL + 'instructions/<mnemonic>/<mode>')
 def getInstructionDetails(mnemonic: str, mode: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM detailed_instructions WHERE mnemonic = '{mnemonic}' AND addressing_mode = '{mode}';")
@@ -204,5 +206,5 @@ def getRandomFact():
 
 # Add the path for our static data
 @app.route("/css/<path:some_path>")
-def serve_css():
+def serve_css(some_path):
     return send_from_directory("static/css", some_path)
