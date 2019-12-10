@@ -12,6 +12,13 @@ db = psycopg2.connect(
     sslmode='require')
 cur = db.cursor()
 
+# A constant for our API's base url
+# For example, if we want:
+#   someurl.domain/api/v1/instructions
+# The "api/v1/" is contained in this constant
+
+API_URL = "/api/v1/6502/"
+
 #
 # getData()
 #
@@ -77,7 +84,7 @@ def getInstructionDicts(sqlData: list):
 #
 # of the format "mnemonic, name, description, flags"
 #
-@app.route('/api/v1/instructions')
+@app.route(API_URL + 'instructions')
 def getAllInstrs():
     data = getData(f"SELECT * FROM instructions_general;")
     return jsonify(getInstructionDicts(data))
@@ -89,7 +96,7 @@ def getAllInstrs():
 #
 # of the format "mnemonic, name, description, flags"
 #
-@app.route('/api/v1/instruction/<mnemonic>')
+@app.route(API_URL + 'instruction/<mnemonic>')
 def getAnInstr(mnemonic: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM instructions_general WHERE mnemonic = '{mnemonic}';")
@@ -103,7 +110,7 @@ def getAnInstr(mnemonic: str):
 #
 # of the format "mnemonic, addressing mode, opcode, lenth, time, page_boundary_increase"
 #
-@app.route('/api/v1/instruction/<mnemonic>/<mode>')
+@app.route(API_URL + 'instruction/<mnemonic>/<mode>')
 def getInstructionDetails(mnemonic: str, mode: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM detailed_instructions WHERE mnemonic = '{mnemonic}' AND addressing_mode = '{mode}';")
@@ -128,7 +135,7 @@ def getFlagDicts(sqlData: list):
 #
 # of the format "flag", "name", "description"
 #
-@app.route('/api/v1/flags')
+@app.route(API_URL + 'flags')
 def getFlags():
     return jsonify(getFlagDicts(getData("SELECT * FROM flags;")))
 
@@ -140,7 +147,7 @@ def getFlags():
 #
 # of the format "flag", "name", "description"
 #
-@app.route('/api/v1/flag/<flag>')
+@app.route(API_URL + 'flag/<flag>')
 def getFlag(flag: str):
     flag = flag.upper()
     return jsonify(getFlagDicts(getData(f"SELECT * FROM flags WHERE flag = '{flag}';")))
@@ -162,7 +169,7 @@ def getFactDicts(sqlData: list):
 #
 # of the format "factID, fact"
 #
-@app.route('/api/v1/facts')
+@app.route(API_URL + 'facts')
 def getAllFacts():
     data = getData(f"SELECT * FROM facts;")
     return jsonify(getFactDicts(data))
@@ -174,7 +181,7 @@ def getAllFacts():
 #
 # of the format "fact"
 #
-@app.route('/api/v1/fact/<int:factID>')
+@app.route(API_URL + 'fact/<int:factID>')
 def getFactID(factID:int):
     factsLength = getTableLength("facts")
     index = (factID % factsLength) + 1  # table indexing starts at 1, not 0
@@ -188,9 +195,14 @@ def getFactID(factID:int):
 # generate a random number using Random() and return the fact with that factID
 # of the format "factID, fact"
 #
-@app.route('/api/v1/fact')
+@app.route(API_URL + 'fact')
 def getRandomFact():
     factsLength = getTableLength("facts")
     index = random.randrange(1, factsLength)
     data = getData(f"SELECT * FROM facts WHERE id = {index};")
     return jsonify(getFactDicts(data))
+
+# Add the path for our static data
+@app.route("/css/<path:some_path>")
+def serve_css():
+    return send_from_directory("static/css", some_path)
