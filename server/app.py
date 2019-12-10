@@ -109,7 +109,28 @@ def getAllInstrs():
 def getAnInstr(mnemonic: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM instructions_general WHERE mnemonic = '{mnemonic}';")
-    return jsonify(getInstructionDicts(data))
+    instruction_dict = getInstructionDicts(data)
+    if (len(instruction_dict) != 0):
+        return jsonify(instruction_dict[0])
+    else:
+        return jsonify({})
+
+
+#
+# getInstructionModes
+# 
+# gets all available addressing modes for the instruction
+#
+# of the format 'mnemonic', 'mode'
+#
+@app.route(API_URL + 'instructions/<mnemonic>/modes')
+def getInstructionModes(mnemonic: str):
+    mnemonic = mnemonic.upper()
+    data = getData(f"SELECT mnemonic, addressing_mode FROM detailed_instructions WHERE mnemonic = '{mnemonic}'")
+    values = []
+    for instruction in data:
+        values.append(instruction[1])
+    return jsonify({"mnemonic":data[0][0], "addressing_modes":values})
 
 
 #
@@ -123,12 +144,13 @@ def getAnInstr(mnemonic: str):
 @cross_origin()
 def getInstructionDetails(mnemonic: str, mode: str):
     mnemonic = mnemonic.upper()
-    data = getData(f"SELECT * FROM detailed_instructions WHERE mnemonic = '{mnemonic}' AND addressing_mode = '{mode}';")
-    values = []
-    for datum in data:
+    data = getData(f"SELECT * FROM detailed_instructions WHERE mnemonic = '{mnemonic}' AND addressing_mode = '{mode}' LIMIT 1;")
+    if (len(data) != 0):
+        datum = data[0]
         instruction = {"mnemonic": datum[0], "addressing_mode": datum[1], "opcode": datum[2], "length": datum[3], "time": datum[4], "page_boundary_increase": datum[5]}
-        values.append(instruction)
-    return jsonify(values)
+        return jsonify(instruction)
+    else:
+        return jsonify({})
 
 
 def getFlagDicts(sqlData: list):
@@ -158,11 +180,15 @@ def getFlags():
 #
 # of the format "flag", "name", "description"
 #
-@app.route(API_URL + 'flag/<flag>')
+@app.route(API_URL + 'flags/<flag>')
 @cross_origin()
 def getFlag(flag: str):
     flag = flag.upper()
-    return jsonify(getFlagDicts(getData(f"SELECT * FROM flags WHERE flag = '{flag}';")))
+    flag_dict = getFlagDicts(getData(f"SELECT * FROM flags WHERE flag = '{flag}' LIMIT 1;"))
+    if (len(flag_dict) != 0):
+        return jsonify(flag_dict[0])
+    else:
+        return jsonify({})
 
 
 def getFactDicts(sqlData: list):
