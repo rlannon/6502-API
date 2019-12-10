@@ -1,11 +1,16 @@
 from flask import Flask, request, redirect, render_template, url_for, json, jsonify, session
+from flask_cors import CORS, cross_origin
 from flaskext.markdown import Markdown
 import random
 import psycopg2
 import os
 
+# initialize our flask app
 app = Flask(__name__)
+cors = CORS(app, resources={r'/api/*': {"origins": "*"}})   # enables CORS anywhere
 Markdown(app, extensions=['tables', 'markdown.extensions.tables'])
+
+# connect to the database
 DATABASE_URL = os.environ.get('DATABASE_URL')
 DATABASE_PORT = os.environ.get('DATABASE_PORT')
 db = psycopg2.connect(
@@ -68,6 +73,7 @@ def index():
 # mainly just for checking whether or not this is the 'best' form of api available
 #
 @app.route('/api/v1')
+@cross_origin()
 def version():
     return render_template('version.html')
 
@@ -99,6 +105,7 @@ def getAllInstrs():
 # of the format "mnemonic, name, description, flags"
 #
 @app.route(API_URL + 'instructions/<mnemonic>')
+@cross_origin()
 def getAnInstr(mnemonic: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM instructions_general WHERE mnemonic = '{mnemonic}';")
@@ -113,6 +120,7 @@ def getAnInstr(mnemonic: str):
 # of the format "mnemonic, addressing mode, opcode, lenth, time, page_boundary_increase"
 #
 @app.route(API_URL + 'instructions/<mnemonic>/<mode>')
+@cross_origin()
 def getInstructionDetails(mnemonic: str, mode: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM detailed_instructions WHERE mnemonic = '{mnemonic}' AND addressing_mode = '{mode}';")
@@ -138,6 +146,7 @@ def getFlagDicts(sqlData: list):
 # of the format "flag", "name", "description"
 #
 @app.route(API_URL + 'flags')
+@cross_origin()
 def getFlags():
     return jsonify(getFlagDicts(getData("SELECT * FROM flags;")))
 
@@ -150,6 +159,7 @@ def getFlags():
 # of the format "flag", "name", "description"
 #
 @app.route(API_URL + 'flag/<flag>')
+@cross_origin()
 def getFlag(flag: str):
     flag = flag.upper()
     return jsonify(getFlagDicts(getData(f"SELECT * FROM flags WHERE flag = '{flag}';")))
@@ -172,6 +182,7 @@ def getFactDicts(sqlData: list):
 # of the format "factID, fact"
 #
 @app.route(API_URL + 'facts')
+@cross_origin()
 def getAllFacts():
     data = getData(f"SELECT * FROM facts;")
     return jsonify(getFactDicts(data))
@@ -184,6 +195,7 @@ def getAllFacts():
 # of the format "fact"
 #
 @app.route(API_URL + 'fact/<int:factID>')
+@cross_origin()
 def getFactID(factID:int):
     factsLength = getTableLength("facts")
     index = (factID % factsLength) + 1  # table indexing starts at 1, not 0
@@ -198,6 +210,7 @@ def getFactID(factID:int):
 # of the format "factID, fact"
 #
 @app.route(API_URL + 'fact')
+@cross_origin()
 def getRandomFact():
     factsLength = getTableLength("facts")
     index = random.randrange(1, factsLength)
@@ -206,5 +219,6 @@ def getRandomFact():
 
 # Add the path for our static data
 @app.route("/css/<path:some_path>")
+@cross_origin()
 def serve_css(some_path):
     return send_from_directory("static/css", some_path)
