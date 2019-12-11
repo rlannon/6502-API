@@ -7,7 +7,11 @@ import os
 
 # initialize our flask app
 app = Flask(__name__)
-cors = CORS(app, resources={r'/api/*': {"origins": "*"}})   # enables CORS anywhere
+
+# initialize CORS; allow API access for all domains (at the moment)
+cors = CORS(app, resources={r'/api/*': {"origins": "*"}})
+
+# initialize our markdown rendering library with the tables extension
 Markdown(app, extensions=['tables', 'markdown.extensions.tables'])
 
 # connect to the database
@@ -21,8 +25,8 @@ cur = db.cursor()
 
 # A constant for our API's base url
 # For example, if we want:
-#   someurl.domain/api/v1/instructions
-# The "api/v1/" is contained in this constant
+#   someurl.domain/api/v1/6502/instructions
+# The "api/v1/6502/" is contained in this constant
 
 API_URL = "/api/v1/6502/"
 
@@ -81,7 +85,6 @@ def index():
 # mainly just for checking whether or not this is the 'best' form of api available
 #
 @app.route('/api/v1')
-@cross_origin()
 def version():
     return render_template('version.html')
 
@@ -150,7 +153,6 @@ def getAllInstrs(methods=["GET", "POST"]):
 # of the format "mnemonic, name, description, flags"
 #
 @app.route(API_URL + 'instructions/<mnemonic>')
-@cross_origin()
 def getAnInstr(mnemonic: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM instructions_general WHERE mnemonic = '{mnemonic}';")
@@ -186,7 +188,6 @@ def getInstructionModes(mnemonic: str):
 # of the format "mnemonic, addressing mode, opcode, lenth, time, page_boundary_increase"
 #
 @app.route(API_URL + 'instructions/<mnemonic>/<mode>')
-@cross_origin()
 def getInstructionDetails(mnemonic: str, mode: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM detailed_instructions WHERE mnemonic = '{mnemonic}' AND addressing_mode = '{mode}' LIMIT 1;")
@@ -253,7 +254,6 @@ def getFactDicts(sqlData: list):
 # of the format "factID, fact"
 #
 @app.route(API_URL + 'facts')
-@cross_origin()
 def getAllFacts():
     data = getData(f"SELECT * FROM facts;")
     return jsonify(getFactDicts(data))
@@ -266,7 +266,6 @@ def getAllFacts():
 # of the format "fact"
 #
 @app.route(API_URL + 'fact/<int:factID>')
-@cross_origin()
 def getFactID(factID:int):
     factsLength = getTableLength("facts")
     index = (factID % factsLength) + 1  # table indexing starts at 1, not 0
@@ -301,10 +300,3 @@ def addFact(methods=["GET", "PUT"]):
             addFactToDB(fact)
         else:
             return render_template("error.html", message="No fact given")
-
-
-# Add the path for our static data
-@app.route("/css/<path:some_path>")
-@cross_origin()
-def serve_css(some_path):
-    return send_from_directory("static/css", some_path)
