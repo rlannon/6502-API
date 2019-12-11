@@ -15,7 +15,7 @@ The purpose of the API is to serve as an instruction set reference for the MOS 6
 | ```/instructions/<mnemonic>``` | Return all information for a specific instruction |
 | ```/instructions/<mnemonic>/<addressing mode>``` | Returns the opcode, instruction length, and execution time for an instruction with the given addressing mode |
 | ```/flags``` | Returns information about all processor flags |
-| ```/flag/<flag>``` | Returns information about the specified flag |
+| ```/flags/<flag>``` | Returns information about the specified flag |
 | ```/facts``` | Returns a list of facts about the 6502 |
 | ```/fact``` | Returns a random fact from our list |
 | ```/fact/<number>``` | Returns a specific fact |

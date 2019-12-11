@@ -1,14 +1,21 @@
-import requests
 from flask import Flask, request, redirect, render_template, url_for, json, jsonify, session
+from flask_cors import CORS, cross_origin
+from flaskext.markdown import Markdown
 import random
-import react
 import psycopg2
 import os
 
+# initialize our flask app
 app = Flask(__name__)
+cors = CORS(app, resources={r'/api/*': {"origins": "*"}})   # enables CORS anywhere
+Markdown(app, extensions=['tables', 'markdown.extensions.tables'])
+
+# connect to the database
 DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASE_PORT = os.environ.get('DATABASE_PORT')
 db = psycopg2.connect(
     DATABASE_URL,
+    port=DATABASE_PORT,
     sslmode='require')
 cur = db.cursor()
 
@@ -66,6 +73,7 @@ def index():
 # mainly just for checking whether or not this is the 'best' form of api available
 #
 @app.route('/api/v1')
+@cross_origin()
 def version():
     return render_template('version.html')
 
@@ -96,11 +104,33 @@ def getAllInstrs():
 #
 # of the format "mnemonic, name, description, flags"
 #
-@app.route(API_URL + 'instruction/<mnemonic>')
+@app.route(API_URL + 'instructions/<mnemonic>')
+@cross_origin()
 def getAnInstr(mnemonic: str):
     mnemonic = mnemonic.upper()
     data = getData(f"SELECT * FROM instructions_general WHERE mnemonic = '{mnemonic}';")
-    return jsonify(getInstructionDicts(data))
+    instruction_dict = getInstructionDicts(data)
+    if (len(instruction_dict) != 0):
+        return jsonify(instruction_dict[0])
+    else:
+        return jsonify({})
+
+
+#
+# getInstructionModes
+# 
+# gets all available addressing modes for the instruction
+#
+# of the format 'mnemonic', 'mode'
+#
+@app.route(API_URL + 'instructions/<mnemonic>/modes')
+def getInstructionModes(mnemonic: str):
+    mnemonic = mnemonic.upper()
+    data = getData(f"SELECT mnemonic, addressing_mode FROM detailed_instructions WHERE mnemonic = '{mnemonic}'")
+    values = []
+    for instruction in data:
+        values.append(instruction[1])
+    return jsonify({"mnemonic":data[0][0], "addressing_modes":values})
 
 
 #
@@ -110,15 +140,17 @@ def getAnInstr(mnemonic: str):
 #
 # of the format "mnemonic, addressing mode, opcode, lenth, time, page_boundary_increase"
 #
-@app.route(API_URL + 'instruction/<mnemonic>/<mode>')
+@app.route(API_URL + 'instructions/<mnemonic>/<mode>')
+@cross_origin()
 def getInstructionDetails(mnemonic: str, mode: str):
     mnemonic = mnemonic.upper()
-    data = getData(f"SELECT * FROM detailed_instructions WHERE mnemonic = '{mnemonic}' AND addressing_mode = '{mode}';")
-    values = []
-    for datum in data:
+    data = getData(f"SELECT * FROM detailed_instructions WHERE mnemonic = '{mnemonic}' AND addressing_mode = '{mode}' LIMIT 1;")
+    if (len(data) != 0):
+        datum = data[0]
         instruction = {"mnemonic": datum[0], "addressing_mode": datum[1], "opcode": datum[2], "length": datum[3], "time": datum[4], "page_boundary_increase": datum[5]}
-        values.append(instruction)
-    return jsonify(values)
+        return jsonify(instruction)
+    else:
+        return jsonify({})
 
 
 def getFlagDicts(sqlData: list):
@@ -136,6 +168,7 @@ def getFlagDicts(sqlData: list):
 # of the format "flag", "name", "description"
 #
 @app.route(API_URL + 'flags')
+@cross_origin()
 def getFlags():
     return jsonify(getFlagDicts(getData("SELECT * FROM flags;")))
 
@@ -147,10 +180,15 @@ def getFlags():
 #
 # of the format "flag", "name", "description"
 #
-@app.route(API_URL + 'flag/<flag>')
+@app.route(API_URL + 'flags/<flag>')
+@cross_origin()
 def getFlag(flag: str):
     flag = flag.upper()
-    return jsonify(getFlagDicts(getData(f"SELECT * FROM flags WHERE flag = '{flag}';")))
+    flag_dict = getFlagDicts(getData(f"SELECT * FROM flags WHERE flag = '{flag}' LIMIT 1;"))
+    if (len(flag_dict) != 0):
+        return jsonify(flag_dict[0])
+    else:
+        return jsonify({})
 
 
 def getFactDicts(sqlData: list):
@@ -170,6 +208,7 @@ def getFactDicts(sqlData: list):
 # of the format "factID, fact"
 #
 @app.route(API_URL + 'facts')
+@cross_origin()
 def getAllFacts():
     data = getData(f"SELECT * FROM facts;")
     return jsonify(getFactDicts(data))
@@ -182,6 +221,7 @@ def getAllFacts():
 # of the format "fact"
 #
 @app.route(API_URL + 'fact/<int:factID>')
+@cross_origin()
 def getFactID(factID:int):
     factsLength = getTableLength("facts")
     index = (factID % factsLength) + 1  # table indexing starts at 1, not 0
@@ -196,6 +236,7 @@ def getFactID(factID:int):
 # of the format "factID, fact"
 #
 @app.route(API_URL + 'fact')
+@cross_origin()
 def getRandomFact():
     factsLength = getTableLength("facts")
     index = random.randrange(1, factsLength)
@@ -204,5 +245,6 @@ def getRandomFact():
 
 # Add the path for our static data
 @app.route("/css/<path:some_path>")
-def serve_css():
+@cross_origin()
+def serve_css(some_path):
     return send_from_directory("static/css", some_path)
