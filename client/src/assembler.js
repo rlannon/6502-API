@@ -8,10 +8,10 @@
 *  Released under the GNU General Public License
 *  see http://gnu.org/licenses/gpl.html
 */
-import $ from 'jquery'
+import $ from 'jquery';
 
 
-function SimulatorWidget(node) {
+export function SimulatorWidget(node) {
   var $node = $(node);
   var ui = UI();
   var display = Display();
@@ -236,7 +236,7 @@ function SimulatorWidget(node) {
 
     // storeKeypress() - Store keycode in ZP $ff
     function storeKeypress(e) {
-      value = e.which;
+      let value = e.which;
       memory.storeByte(0xff, value);
     }
 

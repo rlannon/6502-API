@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import './assembler'
-import './es5-shim'
+import * as emulator from './assembler';
+//import './es5-shim'
 
 class Emulator extends React.Component {
   
   componentDidMount() {
-    SimulatorWidget('.screen')
+    emulator.SimulatorWidget('.screen');
   }
 
   render() {
