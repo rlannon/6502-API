@@ -40,6 +40,14 @@ def getData(query: str):
     return cur.fetchall()
 
 
+# addFact(fact)
+# Adds a fact to the database
+def addFactToDB(fact: str):
+    cur = db.cursor()
+    cur.execute(f"\INSERT INTO facts(fact) VALUES('{fact}');")
+    return
+
+
 #
 # getTableLength()
 #
@@ -105,7 +113,7 @@ def getAllInstrs(methods=["GET", "POST"]):
 
         # if we have an addressing mode field, get the mnemonic
         if (addressing_mode != ""):
-            data = getData(f"SELECT * FROM detailed_instructions
+            data = getData(f"SELECT * FROM detailed_instructions \
             INNER JOIN instructions_general ON detailed_instructions.mnemonic = instructions_general.mnemonic \
             WHERE instructions_general.mnemonic = '{mnemonic}' AND detailed_instructions.addressing_mode = '{addressing_mode}';")
             #
@@ -279,6 +287,20 @@ def getRandomFact(methods=["GET"]):
     index = random.randrange(1, factsLength)
     data = getData(f"SELECT * FROM facts WHERE id = {index};")
     return jsonify(getFactDicts(data))
+
+
+# allow users to add facts to the DB with a post request
+@app.route(API_URL + 'facts/add')
+def addFact(methods=["GET", "PUT"]):
+    # display information on adding facts if they access facts/add with a get request
+    if request.method == "GET":
+        return render_template("add_fact.html")
+    else:
+        fact = request.form.get("fact")
+        if fact:
+            addFactToDB(fact)
+        else:
+            return render_template("error.html", message="No fact given")
 
 
 # Add the path for our static data
