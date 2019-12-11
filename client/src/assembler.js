@@ -8,6 +8,7 @@
 *  Released under the GNU General Public License
 *  see http://gnu.org/licenses/gpl.html
 */
+import $ from 'jquery'
 
 
 function SimulatorWidget(node) {
