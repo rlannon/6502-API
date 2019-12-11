@@ -93,9 +93,46 @@ def getInstructionDicts(sqlData: list):
 # of the format "mnemonic, name, description, flags"
 #
 @app.route(API_URL + 'instructions')
-def getAllInstrs():
-    data = getData(f"SELECT * FROM instructions_general;")
-    return jsonify(getInstructionDicts(data))
+def getAllInstrs(methods=["GET", "POST"]):
+    # GET request
+    if request.method == "GET":
+        data = getData(f"SELECT * FROM instructions_general;")
+        return jsonify(getInstructionDicts(data))
+    # We can also get data from the server through a post request -- as long as we have a proper form
+    else:
+        mnemonic = request.form.get("mnemonic")
+        addressing_mode = request.form.get("addressing_mode")
+
+        # if we have an addressing mode field, get the mnemonic
+        if (addressing_mode != ""):
+            data = getData(f"SELECT * FROM detailed_instructions
+            INNER JOIN instructions_general ON detailed_instructions.mnemonic = instructions_general.mnemonic \
+            WHERE instructions_general.mnemonic = '{mnemonic}' AND detailed_instructions.addressing_mode = '{addressing_mode}';")
+            #
+            # data now contains:
+            #   mnemonic, addressing_mode, opcode, len, time, page_increase, mnemonic, name, description, flags
+            #
+            if len(data) == 1:
+                result = data[0]
+                return jsonify(
+                    {
+                        "mnemonic": result[0],
+                        "addressing_mode": result[1],
+                        "opcode": result[2],
+                        "length": result[3],
+                        "time": result[4],
+                        "page_boundary_increase": result[5],
+                        "name": result[7],
+                        "description": result[8],
+                        "flags": result[9]
+                    }
+                )
+            else:
+                return jsonify({})
+        else:
+            data = getData(f"SELECT * FROM instructions_general WHERE mnemonic = '{mnemonic}';")
+            return jsonify(getInstructionDicts(data))
+
 
 #
 # getAnInstr()
@@ -237,11 +274,12 @@ def getFactID(factID:int):
 #
 @app.route(API_URL + 'fact')
 @cross_origin()
-def getRandomFact():
+def getRandomFact(methods=["GET"]):
     factsLength = getTableLength("facts")
     index = random.randrange(1, factsLength)
     data = getData(f"SELECT * FROM facts WHERE id = {index};")
     return jsonify(getFactDicts(data))
+
 
 # Add the path for our static data
 @app.route("/css/<path:some_path>")
