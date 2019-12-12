@@ -7,13 +7,13 @@ The emulator in this project comes courtesy of [Nick Morgan](https://github.com/
 ## API
 The purpose of the API is to serve as an instruction set reference for the MOS 6502. It returns JSON objects when queried, and returns nothing if the specified instruction or instruction/addressing mode combo cannot be found. The fact number uses a modulus and so querying for a specific fact number will always return something.
 
-The path for API GET requests is ```http://rlannon.heroku.com/api/v1/6502/<path here>```.
+The path for API GET requests is ```http://rlannon.heroku.com/api/v1/6502/<path here>```. The API should be accessed with GET requests, but a few paths support POST requests as well.
 
 ### Paths
 
 | **Path** | **Description** |
 | ---------| --------------- |
-| ```/instructions``` | Returns a list of all instructions |
+| ```/instructions``` | Returns a list of all instructions. Supports HTTP POST requests for fetching JSON data as well. The form that is submitted **must** have inputs with the names ```mnemonic``` and ```addressing_mode```; the former is required and must be all caps, the latter is optional |
 | ```/instructions/<mnemonic>``` | Return all information for a specific instruction |
 | ```/instructions/<mnemonic>/<addressing mode>``` | Returns the opcode, instruction length, and execution time for an instruction with the given addressing mode |
 | ```/flags``` | Returns information about all processor flags |
@@ -21,7 +21,7 @@ The path for API GET requests is ```http://rlannon.heroku.com/api/v1/6502/<path 
 | ```/facts``` | Returns a list of facts about the 6502 |
 | ```/fact``` | Returns a random fact from our list |
 | ```/fact/<number>``` | Returns a specific fact |
-| ```/facts/add``` | The **only** path that supports an HTTP POST request for adding a fact to the database. Form **must** have an input with the name ```fact``` or the request will be ignored |
+| ```/facts/add``` | Supports HTTP POST requests for adding a fact to the database. Form **must** have an input with the name ```fact``` or the request will be ignored |
 
 #### Codes
 The mnemonic should be the 3-letter instruction mnemonic **in caps**. The available addressing modes are:
