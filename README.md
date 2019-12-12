@@ -1,5 +1,5 @@
 # 6502-API
-A 6502 reference API and implementation. This is the final project for CS330 (internet programming). This is a full-stack project that uses bootstrap, flask, react, and PostgreSQL.
+A 6502 reference API and implementation. This is the final project for CS330 (internet programming). This is a full-stack project utilizing a number of technologies including React, Flask, and PostgreSQL.
 
 ## Emulator
 The emulator in this project comes courtesy of [Nick Morgan](https://github.com/skilldrick/6502js), who adapted it from [another online 6502 JS emulator](www.6502asm.com).
@@ -7,7 +7,7 @@ The emulator in this project comes courtesy of [Nick Morgan](https://github.com/
 ## API
 The purpose of the API is to serve as an instruction set reference for the MOS 6502. It returns JSON objects when queried, and returns nothing if the specified instruction or instruction/addressing mode combo cannot be found. The fact number uses a modulus and so querying for a specific fact number will always return something.
 
-The path for API GET requests is ```http://rlannon.heroku.com/api/v1/6502/<path here>```. The API should be accessed with GET requests, but a few paths support POST requests as well.
+The API can be accessed at ```http://rlannon.heroku.com/api/v1/6502/<path here>``` from any domain. The API should typically be accessed with GET requests, but a few paths support POST requests as well, one for accessing data and one for updating the database. Currently, the application does not require authentication or an API key. Please use it responsibly.
 
 ### Paths
 
