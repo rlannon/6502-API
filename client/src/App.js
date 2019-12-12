@@ -1,88 +1,90 @@
 import React from 'react';
 import './App.css';
-import * as emulator from './assembler';
-//import './es5-shim'
+import './apiJS/main';
 
-class Emulator extends React.Component {
-  
-  componentDidMount() {
-    emulator.SimulatorWidget('.screen');
-  }
+function allInstructions() {
+  let form = 
+  (
+  <form>
+    <input type="text" value={mnemonic}>
 
-  render() {
-    return(
-      <div class="widget">
-      <div class="buttons">
-        <input type="button" value="Assemble" class="assembleButton" />
-        <input type="button" value="Run" class="runButton" />
-        <input type="button" value="Reset" class="resetButton" />
-        <input type="button" value="Hexdump" class="hexdumpButton" />
-        <input type="button" value="Disassemble" class="disassembleButton" />
-        <input type="button" value="Notes" class="notesButton" />
-      </div>
+    </input>
+  </form>
+  );
 
-      <textarea class="code"></textarea>
-
-      <canvas class="screen" width="160" height="160"></canvas>
-
-      <div class="debugger">
-        <input type="checkbox" class="debug" name="debug" />
-        <label for="debug">Debugger</label>
-        <div class="minidebugger"></div>
-        <div class="buttons">
-          <input type="button" value="Step" class="stepButton" />
-          <input type="button" value="Jump to ..." class="gotoButton" />
-        </div>
-      </div>
-
-      <div class="monitorControls">
-        <label for="monitoring">Monitor</label>
-        <input type="checkbox" class="monitoring" name="monitoring" />
-
-        <label for="start">Start: $</label>
-        <input type="text" value="0" class="start" name="start" />
-        <label for="length">Length: $</label>
-        <input type="text" value="ff" class="length" name="length" />
-      </div>
-      <div class="monitor"><pre><code></code></pre></div>
-      <div class="messages"><pre><code></code></pre></div>
-
-      <div class="notes">Notes:
-
-Memory location $fe contains a new random byte on every instruction.
-Memory location $ff contains the ascii code of the last key pressed.
-
-Memory locations $200 to $5ff map to the screen pixels. Different values will
-draw different colour pixels. The colours are:
-
-$0: Black
-$1: White
-$2: Red
-$3: Cyan
-$4: Purple
-$5: Green
-$6: Blue
-$7: Yellow
-$8: Orange
-$9: Brown
-$a: Light red
-$b: Dark grey
-$c: Grey
-$d: Light green
-$e: Light blue
-$f: Light grey
-    </div>
-    </div>
+  if (mnemonic != "") {
+    let instructionData = getAllInstructionData(mnemonic)
+    
+    return
+    (
+    <p>
+      {instructionData}
+    </p>
     );
   }
 }
 
+function allFlags() {
+
+}
+
+function specificFlag() {
+
+}
+
+function specificInstruction() {
+
+}
+
+function dataForm(userSelcection) {
+
+  switch (userSelcection) {
+    case "all_instructions":
+      return <allInstructions/>
+
+    case "all_flags":
+      return <allFlags/>
+
+    case "specific_flag":
+      return <specificFlag/>
+
+    case "specific_instruction":
+      return <specificInstruction/>
+
+    default:
+      return <p>Don't mess with that!</p>
+  }   
+
+}
+
 function App() {
+  let instr_all = "all_instructions", flags_all = "all_flags", flag = "specific_flag", instr = "specific_instruction";
+  var userSelected = instr_all;
+
   return (
     <div className="App">
       <header className="App-header">
-        < Emulator />
       </header>
+      <main>
+        <p>
+          What type of data do you want to see?
+        </p>
+        <select value={userSelected}>
+          <option value={instr_all}>
+            Show me all the instructions
+          </option>
+          <option value={flags_all}>
+            Show me all the flags
+          </option>
+          <option value={flag}>
+            Let me select a flag, and get it's data
+          </option>
+          <option value={instr}>
+            Let me type an instruction, and get it's data
+          </option>
+        </select>
+        < dataForm />
+      </main>
     </div>
   );
 }

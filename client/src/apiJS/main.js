@@ -1,7 +1,7 @@
 /* jshint esversion: 8 */
 /* jshint node: true */
 /* jshint strict: true */
-'use strict';
+// 'use strict'; Unecessary in safe modules (/apiJS)
 
 // Use a constant for the base API URL (makes our lives easier)
 const API_URL = "http://rlannon.herokuapp.com/api/v1/6502";
