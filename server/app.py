@@ -48,7 +48,8 @@ def getData(query: str):
 # Adds a fact to the database
 def addFactToDB(fact: str):
     cur = db.cursor()
-    cur.execute(f"\INSERT INTO facts(fact) VALUES('{fact}');")
+    cur.execute(f"INSERT INTO facts(fact) VALUES('{fact}');")
+    cur.execute("COMMIT;")
     return
 
 
@@ -103,8 +104,8 @@ def getInstructionDicts(sqlData: list):
 #
 # of the format "mnemonic, name, description, flags"
 #
-@app.route(API_URL + 'instructions')
-def getAllInstrs(methods=["GET", "POST"]):
+@app.route(API_URL + 'instructions', methods=["GET", "POST"])
+def getAllInstrs():
     # GET request
     if request.method == "GET":
         data = getData(f"SELECT * FROM instructions_general;")
@@ -279,24 +280,27 @@ def getFactID(factID:int):
 # generate a random number using Random() and return the fact with that factID
 # of the format "factID, fact"
 #
-@app.route(API_URL + 'fact')
+@app.route(API_URL + 'fact', methods=["GET"])
 @cross_origin()
-def getRandomFact(methods=["GET"]):
-    factsLength = getTableLength("facts")
-    index = random.randrange(1, factsLength)
-    data = getData(f"SELECT * FROM facts WHERE id = {index};")
-    return jsonify(getFactDicts(data))
+def getRandomFact():
+    allFacts = getData(f"SELECT fact FROM facts;")
+    index = random.randrange(0, len(allFacts))
+    return jsonify(getFactDicts(allFacts[index]))
 
 
 # allow users to add facts to the DB with a post request
-@app.route(API_URL + 'facts/add')
-def addFact(methods=["GET", "PUT"]):
+@app.route(API_URL + 'facts/add', methods=["GET", "POST"])
+def addFact():
     # display information on adding facts if they access facts/add with a get request
+    print("Add fact API page")
     if request.method == "GET":
+        print("Method == GET")
         return render_template("add_fact.html")
     else:
+        print("Method == POST")
         fact = request.form.get("fact")
         if fact:
             addFactToDB(fact)
+            return render_template("fact_success.html")
         else:
-            return render_template("error.html", message="No fact given")
+            return render_template("fact_error.html")

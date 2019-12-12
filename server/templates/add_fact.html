@@ -4,7 +4,7 @@
 <div class="container">
     <h1 class="alert alert-primary">Add Facts</h1>
     <h3>Add your very own 6502 facts to this API</h3>
-    <p>If you wish to add facts to the API, make a PUT request to this url (instead of GET). Note it must be a PUT request, not a POST request; since POST is not idempotent, we don't want multiple requests making multiple additions to the database. Your form must have a field called <code>fact</code> that contains the fact. Any other fields will be ignored by this API.</p>
+    <p>If you wish to add facts to the API, make a POST request to this url (instead of GET). Your form must have a field called <code>fact</code> that contains the fact. Any other fields will be ignored by this API.</p>
 </div>
 
 {% endblock %}

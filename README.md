@@ -7,6 +7,8 @@ The emulator in this project comes courtesy of [Nick Morgan](https://github.com/
 ## API
 The purpose of the API is to serve as an instruction set reference for the MOS 6502. It returns JSON objects when queried, and returns nothing if the specified instruction or instruction/addressing mode combo cannot be found. The fact number uses a modulus and so querying for a specific fact number will always return something.
 
+The path for API GET requests is ```http://rlannon.heroku.com/api/v1/6502/<path here>```.
+
 ### Paths
 
 | **Path** | **Description** |
@@ -19,6 +21,7 @@ The purpose of the API is to serve as an instruction set reference for the MOS 6
 | ```/facts``` | Returns a list of facts about the 6502 |
 | ```/fact``` | Returns a random fact from our list |
 | ```/fact/<number>``` | Returns a specific fact |
+| ```/facts/add``` | The **only** path that supports an HTTP POST request for adding a fact to the database. Form **must** have an input with the name ```fact``` or the request will be ignored |
 
 #### Codes
 The mnemonic should be the 3-letter instruction mnemonic **in caps**. The available addressing modes are:
