@@ -15,7 +15,13 @@ async function getAllInstructionData(mnemonic) {
 
     for(let mode of addressing_modes) {
         let mode_data = await getOpcode(mnemonic, mode);
-        instruction_data.modes.push({addressing_mode: mode, opcode: mode_data.opcode});
+        instruction_data.modes.push({
+            addressing_mode: mode, 
+            opcode: mode_data.opcode,
+            length: mode_data.length,
+            time: mode_data.time,
+            page_boundary_increase: mode_data.page_boundary_increase
+        });
     }
 
     return instruction_data;

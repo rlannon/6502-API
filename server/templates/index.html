@@ -8,13 +8,13 @@
 ## API
 The purpose of the API is to serve as an instruction set reference for the MOS 6502. It returns JSON objects when queried, and returns nothing if the specified instruction or instruction/addressing mode combo cannot be found. The fact number uses a modulus and so querying for a specific fact number will always return something.
 
-The path for API GET requests is ```rlannon.heroku.com/api/v1/6502/<path here>```.
+The API can be accessed at ```http://rlannon.heroku.com/api/v1/6502/<path here>``` from any domain. The API should typically be accessed with GET requests, but a few paths support POST requests as well, one for accessing data and one for updating the database. Currently, the application does not require authentication or an API key. Please use it responsibly.
 
 ### Paths
 
 | **Path** | **Description** |
-| --------- | --------------- |
-| ```/instructions``` | Returns a list of all instructions |
+| ---------| --------------- |
+| ```/instructions``` | Returns a list of all instructions. Supports HTTP POST requests for fetching JSON data as well. The form that is submitted **must** have inputs with the names ```mnemonic``` and ```addressing_mode```; the former is required and must be all caps, the latter is optional |
 | ```/instructions/<mnemonic>``` | Return all information for a specific instruction |
 | ```/instructions/<mnemonic>/<addressing mode>``` | Returns the opcode, instruction length, and execution time for an instruction with the given addressing mode |
 | ```/flags``` | Returns information about all processor flags |
@@ -22,6 +22,7 @@ The path for API GET requests is ```rlannon.heroku.com/api/v1/6502/<path here>``
 | ```/facts``` | Returns a list of facts about the 6502 |
 | ```/fact``` | Returns a random fact from our list |
 | ```/fact/<number>``` | Returns a specific fact |
+| ```/facts/add``` | Supports HTTP POST requests for adding a fact to the database. Form **must** have an input with the name ```fact``` or the request will be ignored |
 
 #### Codes
 The mnemonic should be the 3-letter instruction mnemonic **in caps**. The available addressing modes are:
@@ -86,6 +87,7 @@ Flags information returns:
 | ```flag``` | A char with the flag identifier |
 | ```name``` | The name of the flag |
 | ```description``` | The description of the flag and its use |
+    
     {% endfilter %}
 </div>
 

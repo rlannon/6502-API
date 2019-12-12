@@ -1,9 +1,6 @@
 # 6502-API
 A 6502 reference API and implementation. This is the final project for CS330 (internet programming). This is a full-stack project utilizing a number of technologies including React, Flask, and PostgreSQL.
 
-## Emulator
-The emulator in this project comes courtesy of [Nick Morgan](https://github.com/skilldrick/6502js), who adapted it from [another online 6502 JS emulator](www.6502asm.com).
-
 ## API
 The purpose of the API is to serve as an instruction set reference for the MOS 6502. It returns JSON objects when queried, and returns nothing if the specified instruction or instruction/addressing mode combo cannot be found. The fact number uses a modulus and so querying for a specific fact number will always return something.
 
@@ -52,7 +49,7 @@ The flag should be followed by a char with the flag identifier:
 
 ### Returned Information
 
-#### Mnemonic along
+#### Mnemonic alone
 Information returned about instructions includes:
 
 | **Field** | **Description** |
