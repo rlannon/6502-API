@@ -244,6 +244,7 @@ def getFlag(flag: str):
 
 
 def getFactDicts(sqlData: list):
+    print(sqlData)
     values = []
     for datum in sqlData:
         if (len(datum) == 1):
@@ -290,7 +291,12 @@ def getFactID(factID:int):
 def getRandomFact():
     allFacts = getData(f"SELECT fact FROM facts;")
     index = random.randrange(0, len(allFacts))
-    return jsonify(getFactDicts(allFacts[index]))
+    print(allFacts[index])
+    return jsonify(
+        {
+            "fact": allFacts[index][0]
+        }
+    )
 
 
 # allow users to add facts to the DB with a post request
