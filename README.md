@@ -52,7 +52,7 @@ The flag should be followed by a char with the flag identifier:
 
 ### Returned Information
 
-#### Mnemonic along
+#### Mnemonic alone
 Information returned about instructions includes:
 
 | **Field** | **Description** |
