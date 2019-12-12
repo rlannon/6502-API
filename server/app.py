@@ -112,8 +112,13 @@ def getAllInstrs():
         return jsonify(getInstructionDicts(data))
     # We can also get data from the server through a post request -- as long as we have a proper form
     else:
+        # get the data from the user's form
         mnemonic = request.form.get("mnemonic")
         addressing_mode = request.form.get("addressing_mode")
+
+        # ensure our mnemonic is uppercase, addressing mode is lowercase
+        mnemonic = mnemonic.upper()
+        addressing_mode = addressing_mode.lower()
 
         # if we have an addressing mode field, get the mnemonic
         if (addressing_mode != ""):
