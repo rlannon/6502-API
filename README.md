@@ -1,5 +1,5 @@
 # 6502-API
-A 6502 reference API and implementation. This is the final project for CS330 (internet programming). This is a full-stack project utilizing a number of technologies including React, Flask, and PostgreSQL.
+A 6502 reference API and implementation. Final project for CS330.
 
 ## API
 The purpose of the API is to serve as an instruction set reference for the MOS 6502. It returns JSON objects when queried, and returns nothing if the specified instruction or instruction/addressing mode combo cannot be found. The fact number uses a modulus and so querying for a specific fact number will always return something.
